@@ -88,6 +88,7 @@ router.post("/thumbnail", (req, res) => {
     });
 });
 
+//  비디오 업로드
 router.post("/uploadVideo", (req, res) => {
 
   const video = new Video(req.body)
@@ -95,10 +96,20 @@ router.post("/uploadVideo", (req, res) => {
   video.save((err, video) => {
       if(err) return res.status(400).json({ success: false, err })
       return res.status(200).json({
-          success: true 
+          success: true })
       })
   })
 
+// 랜딩 페이지 비디오 나타내기
+router.get("/getVideos", (req, res) => {
+    
+  //비디오를 DB에서 가져와서 클라이언트에 보낸다.
+  Video.find()
+      .populate('writer')
+      .exec((err, videos) => {
+        if(err) return res.status(400).send(err);
+        return res.status(200).json({ success : true, videos });
+      });
 });
 
 module.exports = router;
