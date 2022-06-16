@@ -4,7 +4,8 @@ import Axios from 'axios'
 import SideVideo from './Sections/SideVideo'
 import Subscribe from './Sections/Subscribe'
 import Comment from './Sections/Comment'
-// import { response } from 'express'
+
+
 
 function VideoDetailPage(props) {
 
@@ -14,7 +15,7 @@ function VideoDetailPage(props) {
 
   const [VideoDetail, setVideoDetail] = useState([])
 
-  // const [Comments, setComments] = useState([])
+  const [Comments, setComments] = useState([])
 
   useEffect(() => {
     Axios.post('/api/video/getVideoDetail', variable)
@@ -26,8 +27,20 @@ function VideoDetailPage(props) {
         }
       })
 
-      // console.log(Comments)
+      Axios.post('/api/comment/getComments', variable)
+      .then(response => {
+        if(response.data.success) {
+          setComments(response.data.comments)
+        } else {
+          alert('코멘트 정보 가져오기 실패!')
+        }
+      })
+
   },[])
+
+  const refreshFunction = (newComment) => {
+    setComments(Comments.concat(newComment))
+  }
 
   if(VideoDetail.writer) {
 
@@ -50,7 +63,7 @@ function VideoDetailPage(props) {
   
             </List.Item>
             {/* comments */}
-            <Comment postId={videoId} />
+            <Comment refreshFunction={refreshFunction} commentLists={Comments} postId={videoId} />
           </div>
         </Col>
 
